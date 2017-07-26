@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://www.example.org/Titulos/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Titulos"
+	targetNamespace="http://www.example.org/Titulos/" xmlns:xsd1="http://www.example.org/TitulosRequest"
+	xmlns:xsd2="http://www.example.org/TitulosResponse">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://www.example.org/Titulos/">
+			<xsd:import namespace="http://www.example.org/TitulosRequest"
+				schemaLocation="../xsd/TitulosRequest.xsd">
+			</xsd:import>
+			<xsd:import namespace="http://www.example.org/TitulosResponse"
+				schemaLocation="../xsd/TitulosResponse.xsd">
+			</xsd:import>
+			<xsd:element name="Request" type="xsd1:busca" />
+			<xsd:element name="Response" type="xsd2:titulos" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="BuscaTitulosRequest">
+		<wsdl:part name="parameters" element="tns:Request" xmlns:tns="http://www.example.org/Titulos/" />
+	</wsdl:message>
+	<wsdl:message name="BuscaTitulosResponse">
+		<wsdl:part name="parameters" element="tns:Response" xmlns:tns="http://www.example.org/Titulos/" />
+	</wsdl:message>
+	<wsdl:portType name="Titulos">
+		<wsdl:operation name="BuscaTitulos">
+			<wsdl:input message="tns:BuscaTitulosRequest" />
+			<wsdl:output message="tns:BuscaTitulosResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="TitulosSOAP" type="tns:Titulos">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="BuscaTitulos">
+			<soap:operation soapAction="http://www.example.org/Titulos/BuscaTitulos" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="Titulos">
+		<wsdl:port binding="tns:TitulosSOAP" name="TitulosSOAP">
+			<soap:address location="http://www.example.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

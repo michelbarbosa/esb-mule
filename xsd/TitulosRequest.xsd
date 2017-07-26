@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/TitulosRequest"
+	xmlns:tns="http://www.example.org/TitulosRequest" elementFormDefault="qualified">
+    <complexType name="busca">
+    	<sequence>
+    		<element name="clube" type="string"></element>
+    		<element name="inicio" type="date"></element>
+    		<element name="fim" type="date"></element>
+    	</sequence>
+    </complexType>
+</schema>

@@ -8,9 +8,12 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
     <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" basePath="teste" doc:name="HTTP Request Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" basePath="titulos" doc:name="HTTP Listener Configuration"/>
     <flow name="trabalho-finalFlow">
-        <http:listener config-ref="" path="/" doc:name="HTTP"/>
-        <cxf:no-operation-selected doc:name="CXF"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+        <cxf:proxy-service namespace="http://www.example.org/Titulos/" service="Titulos" payload="body" wsdlLocation="wsdl/Titulos.wsdl" doc:name="CXF"/>
+        <logger message="SOAP to REST: #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
         <http:request config-ref="HTTP_Request_Configuration" path="/" method="GET" doc:name="HTTP"/>
+        <logger message="After REST: #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
