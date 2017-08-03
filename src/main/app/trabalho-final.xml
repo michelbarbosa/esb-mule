@@ -26,7 +26,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 doc:name="CXF" />
             <logger message="SOAP to REST: #[message.payloadAs(java.lang.String)] "
                 level="INFO" doc:name="Logger" />
-            <logger message="Param: #[xpath3('//tit:Request/tit1:inicio').text]"
+            <logger message="Param: #[xpath3('/*:buscaTitulos/*:arg0/*:fim')]"
                 level="INFO" doc:name="Logger Params" />
             <http:request config-ref="HTTP_Request_Configuration"
                 path="/" method="GET" doc:name="HTTP">
