@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
     xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core"
     xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -9,9 +9,10 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <http:request-config name="HTTP_Request_Configuration"
-        host="localhost" port="8081" basePath="teste" doc:name="HTTP Request Configuration" />
+        host="localhost" port="8081" basePath="/" doc:name="HTTP Request Configuration" />
     <http:listener-config name="HTTP_Listener_Configuration"
         host="0.0.0.0" port="8082" basePath="titulos" doc:name="HTTP Listener Configuration" />
         <mulexml:namespace-manager includeConfigNamespaces="false">
@@ -24,20 +25,32 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             <cxf:proxy-service namespace="http://www.example.org/Titulos/"
                 service="Titulos" payload="body" wsdlLocation="wsdl/Titulos.wsdl"
                 doc:name="CXF" />
-            <logger message="SOAP to REST: #[message.payloadAs(java.lang.String)] "
-                level="INFO" doc:name="Logger" />
-            <logger message="Param: #[xpath3('/*:buscaTitulos/*:arg0/*:fim')]"
-                level="INFO" doc:name="Logger Params" />
+
             <http:request config-ref="HTTP_Request_Configuration"
-                path="/" method="GET" doc:name="HTTP">
+                path="/titulos" method="GET" doc:name="HTTP">
                 <http:request-builder>
-                    <http:query-param paramName="data_inicio"
-                        value=" #[message.payload.inicio]" />
+                <http:query-param paramName="data_inicio" value="#[xpath3('/*:Request/*:inicio')]"/>
+                <http:query-param paramName="data_fim" value="#[xpath3('/*:Request/*:fim')]"/>
+                <http:query-param paramName="clube" value="#[xpath3('/*:Request/*:clube')]"/>
+
                 </http:request-builder>
             </http:request>
-            <logger message="After REST: #[message.payloadAs(java.lang.String)]"
-                level="INFO" doc:name="Logger" />
-            <json:json-to-xml-transformer mimeType="text/xml"
-                doc:name="JSON to XML" ignoreBadInput="true" />
+        <dw:transform-message doc:name="Transform Message" metadata:id="ad407af0-a729-4118-aa61-e22485b31630">
+            <dw:input-payload doc:sample="sample_data\list_list_json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+---
+{
+	titulos: {
+		(payload map ((payload01 , indexOfPayload01) -> {
+			titulo: {
+				nome: payload01.nome,
+				data: payload01.data as :date
+			}
+		}))
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+
         </flow>
 </mule>
